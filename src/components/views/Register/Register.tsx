@@ -3,11 +3,22 @@ import { Button, Card, CardBody, Input} from "@nextui-org/react";
 import Link from "next/link";
 import useRegister from "./useRegister";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Controller } from "react-hook-form";
+import { Spinner } from "@nextui-org/react";
+import { p } from "framer-motion/client";
+import { cn } from "@/utils/cn";
 
 
 const Register = () => {
-    const variants = ["flat", "bordered", "underlined", "faded"];
-    const {visiblePassword, handleVisiblePassword} = useRegister()
+    const {
+        visiblePassword, 
+        handleVisiblePassword, 
+        control, 
+        handleSubmit,
+        handleRegister, 
+        isPendingRegister, 
+        errors
+    } = useRegister()
 
     return(
         <div className="flex w-full flex-col  items-center justify-center gap-10 lg:flex-row lg:gap-20 ">
@@ -31,17 +42,66 @@ const Register = () => {
                     <h2 className="text-xl font-bold text-danger">Create Account</h2>
                     <p className="text-small mb-4">
                         Have an account&nbsp;
-                        <Link href="/login" className="font-semibold text-blue-600 hover:text-gray-400">Login here</Link>
+                        <Link href="/auth/login" className="font-semibold text-blue-600 hover:text-gray-400">Login here</Link>
                     </p>
-                    <form className="flex w-80 flex-col gap-4">
-                        <Input label="Fullname" type="text" variant="bordered" autoComplete="off" />
-                        <Input label="Username" type="text" variant="bordered" autoComplete="off" />
-                        <Input label="Email" type="email" variant="bordered" autoComplete="off" />
+                    {errors.root && (
+                        <p className="mb-2 font-medium text-danger">
+                            {errors?.root?.message}
+                        </p>
+                    )}
+                    <form className={cn("flex w-80 flex-col gap-4",  Object.keys(errors).length > 0 ? "gap-2" : "gap-4" )}
+                    onSubmit={handleSubmit(handleRegister)}>
+                        <Controller
+                        name="fullName" 
+                        control={control} 
+                        render={({ field }) => (
+                            <Input
+                            {...field}
+                            label="Fullname" 
+                            type="text" 
+                            variant="bordered" 
+                            autoComplete="off" 
+                            isInvalid={errors.fullName !== undefined}
+                            errorMessage={errors.fullName?.message}/>
+                        )}/>
+                        <Controller
+                        name="userName" 
+                        control={control} 
+                        render={({ field }) => (
+                            <Input
+                            {...field}
+                            label="Username"
+                            type="text" 
+                            variant="bordered" 
+                            autoComplete="off" 
+                            isInvalid={errors.fullName !== undefined}
+                            errorMessage={errors.userName?.message}/>
+                        )}/>
+                        <Controller
+                        name="email" 
+                        control={control} 
+                        render={({ field }) => (
+                        <Input
+                        {...field}
+                        label="Email" 
+                        type="email" 
+                        variant="bordered" 
+                        autoComplete="off" 
+                        isInvalid={errors.email !== undefined}
+                        errorMessage={errors.email?.message}/>
+                        )}/>
+                        <Controller
+                        name="password" 
+                        control={control} 
+                        render={({ field }) => (
                         <Input 
+                            {...field}
                             label="Password" 
                             type={visiblePassword.password ? 'text' : 'password'}
                             variant="bordered" 
                             autoComplete="off" 
+                            isInvalid={errors.password !== undefined}
+                            errorMessage={errors.password?.message}
                             endContent={
                                 <Button className="focus:outline-none"
                                 type="button"
@@ -53,11 +113,19 @@ const Register = () => {
                                 </Button>
                             } 
                             />
+                        )}/>
+                        <Controller
+                        name="confirmPassword" 
+                        control={control} 
+                        render={({ field }) => (
                         <Input 
+                        {...field}
                             label="Password confirmation" 
                             type={visiblePassword.passwordConfirmation ? 'text' : 'password'}
                             variant="bordered" 
                             autoComplete="off" 
+                            isInvalid={errors.confirmPassword !== undefined}
+                            errorMessage={errors.confirmPassword?.message}
                             endContent={
                                 <Button className="focus:outline-none"
                                 type="button"
@@ -69,7 +137,8 @@ const Register = () => {
                                 </Button>
                             } 
                             />
-                            <Button color="danger" size="lg" type="submit">Register</Button>
+                        )}/>
+                            <Button color="danger" size="lg" type="submit">{isPendingRegister ? (<Spinner color="white" size="sm"/>) : "Register"}</Button>
                     </form>
                 </CardBody>
             </Card>
@@ -77,4 +146,4 @@ const Register = () => {
     );
 };
 
-export default Register
+export default Register;
