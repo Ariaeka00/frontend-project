@@ -1,10 +1,10 @@
 import AuthLayout from "@/components/layouts/AuthLayout";
-import Register from "@/components/views/Register";
+import RegisterSuccess from "@/components/views/RegisterSuccess/RegisterSuccess";
 
 const RegisterSuccessPage = () => {
     return(
         <AuthLayout title="Master Pack Indonesia | Register Success">
-            <h1>Register Success</h1>
+            <RegisterSuccess />
         </AuthLayout>
     )
 }
